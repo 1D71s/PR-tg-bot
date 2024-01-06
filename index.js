@@ -1,38 +1,58 @@
+const express = require('express');
+const cors = require('cors');
 const TelegramBot = require('node-telegram-bot-api');
-require('dotenv').config();
+const { sequelize, Product, connectToDatabase } = require('./db');
+
+const app = express();
+const port = process.env.PORT || 8001;
+
+app.use(cors());
+app.use(express.json());
+
 
 const token = process.env.PUBLIC_BOT;
 const tokenAdmin = process.env.ADMIN_BOT;
 
+const webAppUrl = 'https://pr-tg-app.vercel.app/';
+
 const bot = new TelegramBot(token, { polling: true });
 const adminBot = new TelegramBot(tokenAdmin);
-
-bot.setMyCommands([
-    { command: '/start', description: 'Початок' },
-    { command: '/product', description: 'Обрати замовлення' },
-    { command: '/backet', description: 'Кошик' },
-    { command: '/order', description: 'Відправити замовлення' },
-    { command: '/info', description: 'Інформація про піцерію' },
-])
 
 adminBot.setMyCommands([
     { command: '/start', description: 'Початок' },
     { command: '/product', description: 'Додати позицію' },
     { command: '/order', description: 'Замовлення' },
-])
+]);
 
 adminBot.on('message', (msg) => {
     const chatId = msg.chat.id;
     const text = msg.text;
-})
 
-bot.on('message', (msg) => {
+    if (text === '/product') {}
+});
+
+const adminId = [625210390];
+bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
     const text = msg.text;
+    const userId = msg.from.id;
 
-    bot.sendMessage(chatId, 'Received your message');
+    if (text === '/start') {
+        await bot.sendMessage(chatId, 'Ви можете обрати замовлення нижче', {
+            reply_markup: {
+                inline_keyboard: [
+                    [{ text: 'Обрати замовлення', web_app: { url: webAppUrl } }]
+                ]
+            }
+        });
+    }
 
     if (text === '/order') {
-        adminBot.sendMessage(chatId, 'Тестовое сообщение с другого бота');
+        adminBot.sendMessage(adminId[0], `Новый заказ от пользователя ${userId}: ${text}`);
     }
+});
+
+app.listen(port, () => {
+    connectToDatabase();
+    console.log(`Server is running on port ${port}`);
 });
