@@ -8,17 +8,6 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, proces
     logging: false,
 });
 
-const Product = sequelize.define('Product', {
-    name: {
-        type: Sequelize.STRING,
-        allowNull: false,
-    },
-    price: {
-        type: Sequelize.DECIMAL(10, 2),
-        allowNull: false,
-    },
-});
-
 async function connectToDatabase() {
     try {
         await sequelize.authenticate();
@@ -31,6 +20,5 @@ async function connectToDatabase() {
 
 module.exports = {
     sequelize,
-    Product,
     connectToDatabase,
 };
