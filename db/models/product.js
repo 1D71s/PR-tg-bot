@@ -1,5 +1,5 @@
-const { DataTypes } = require('sequelize');
-const { sequelize } = require('./db')
+import { DataTypes } from 'sequelize';
+import { sequelize } from '../connect.js';
 
 const Product = sequelize.define('Product', {
     id: {type: DataTypes.INTEGER, primaryKey: true, unique: true, autoIncrement: true},
@@ -9,4 +9,4 @@ const Product = sequelize.define('Product', {
     price: { type: DataTypes.DECIMAL(10, 2), defaultValue: 0 },
 });
 
-module.exports = { Product }
+export { Product }
