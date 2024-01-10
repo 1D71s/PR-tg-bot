@@ -5,17 +5,50 @@ export const adminBotModule = (adminBot) => {
 
     adminBot.setMyCommands([
         { command: '/start', description: 'Початок' },
-        { command: '/product', description: 'Додати позицію' },
-        { command: '/order', description: 'Замовлення' },
+        { command: '/products', description: 'Позиції' },
+        { command: '/add', description: 'Додати позицію' },
+        { command: '/orders', description: 'Замовлення' },
     ]);
+
+    const getAllProducts = async (chat) => {
+        try {
+            const products = await Product.findAll();
+
+            const productData = products.map(product => product.dataValues);
+
+            for (const product of productData) {
+                const messageText = `
+                    ID: ${product.id}
+                    Позиція: ${product.name}
+                    Опис: ${product.description}
+                    Ціна: ${product.price} ГРН
+                `;
+            
+                const inlineKeyboard = {
+                    inline_keyboard: [
+                        [{ text: 'Видалити позицію', callback_data: `delete_product_${product.id}` }]
+                    ]
+                };
+            
+                await adminBot.sendPhoto(chat, product.image, { caption: messageText, reply_markup: inlineKeyboard });
+            }
+            
+        } catch (error) {
+            await adminBot.sendMessage(chatId, 'Error fetching products. Please try again later.');
+        }
+    }
     
     const userStates = {};
     
     adminBot.on('message', async (msg) => {
         const chatId = msg.chat.id;
         const text = msg.text;
+
+        if (text == '/products') {
+            getAllProducts(chatId)
+        }
     
-        if (text === '/product') {
+        if (text === '/add') {
             userStates[chatId] = {
                 step: 'name',
                 data: {}
@@ -63,6 +96,22 @@ export const adminBotModule = (adminBot) => {
                 await adminBot.sendMessage(chatId, 'Произошла ошибка при создании продукта. Пожалуйста, попробуйте еще раз.');
                 delete userStates[chatId];
             }
+        }
+    });
+
+    adminBot.on('callback_query', async (callbackQuery) => {
+        const chatId = callbackQuery.message.chat.id;
+        const data = callbackQuery.data;
+    
+        if (data.startsWith('delete_product_')) {
+            const productId = parseInt(data.replace('delete_product_', ''), 10);
+            
+            await Product.destroy({
+                where: { id: productId }
+            });
+    
+            await adminBot.sendMessage(chatId, `Продукт с ID ${productId} видалено.`);
+            getAllProducts(chatId)
         }
     });
 } 
