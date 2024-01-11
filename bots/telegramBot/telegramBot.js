@@ -18,7 +18,7 @@ export const telegramBotModule = (bot, webAppUrl, adminBot) => {
         }
     
         if (text === '/order') {
-            adminBot.sendMessage(adminId[0], `Новый заказ от пользователя ${userId}: ${text}`);
+            adminBot.sendMessage(adminId[0], `Нове замовлення від користувача ${userId}: ${text}`);
         }
     });
 } 
