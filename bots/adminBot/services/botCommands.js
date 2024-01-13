@@ -3,6 +3,6 @@ export const setBotCommands = (adminBot) => {
         { command: '/start', description: 'Початок' },
         { command: '/products', description: 'Позиції' },
         { command: '/add', description: 'Додати позицію' },
-        { command: '/orders', description: 'Замовлення' },
+        // { command: '/orders', description: 'Замовлення' },
     ]);
 };

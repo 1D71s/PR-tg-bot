@@ -7,7 +7,8 @@ import { connectToDatabase } from './db/connect.js';
 import { telegramBotModule } from './bots/telegramBot/telegramBot.js';
 import { adminBotModule } from './bots/adminBot/adminBot.js';
 
-import { test, getProducts } from './controllers/product.js'
+import { getProducts } from './controllers/product.js'
+import { createOrder } from './controllers/order.js'
 
 const app = express();
 const port = process.env.PORT || 8001;
@@ -22,13 +23,13 @@ const webAppUrl = process.env.PUBLIC_APP;
 
 const bot = new TelegramBot(token, { polling: true });
 const adminBot = new TelegramBot(tokenAdmin, { polling: true });
-
+const adminId = [625210390];
 
 adminBotModule(adminBot)
 telegramBotModule(bot, webAppUrl, adminBot)
 
-app.get('/getImage', (req, res) => test(res))
 app.get('/products', (req, res) => getProducts(res))
+app.post('/order', (req, res) => createOrder(req, res, adminBot, bot, adminId))
 
 connectToDatabase().then(() => {
     app.listen(port, () => {

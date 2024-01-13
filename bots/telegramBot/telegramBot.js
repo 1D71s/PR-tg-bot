@@ -1,8 +1,6 @@
-export const telegramBotModule = (bot, webAppUrl, adminBot) => {
+export const telegramBotModule = (bot, webAppUrl, adminBot, adminId) => {
     
-    bot.on('message', async (msg) => {
-        const adminId = [625210390];
-    
+    bot.on('message', async (msg) => {    
         const chatId = msg.chat.id;
         const text = msg.text;
         const userId = msg.from.id;
