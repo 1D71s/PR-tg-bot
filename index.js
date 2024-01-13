@@ -23,7 +23,7 @@ const webAppUrl = process.env.PUBLIC_APP;
 
 const bot = new TelegramBot(token, { polling: true });
 const adminBot = new TelegramBot(tokenAdmin, { polling: true });
-const adminId = [625210390];
+const adminId = [process.env.ADMIN_ID1];
 
 adminBotModule(adminBot)
 telegramBotModule(bot, webAppUrl, adminBot)
